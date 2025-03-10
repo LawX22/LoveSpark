@@ -63,9 +63,62 @@ const CoupleCardGenerator = () => {
       "What's your favorite memory of us together?",
       "When did you first realize you were falling in love with me?",
       "What's one small thing I do that makes you feel loved?",
-      // Add more questions as needed
+      "What do you think is the most romantic thing we've ever done?",
+      "How do you feel when we're apart for a long time?",
+      "What's your favorite way to spend time with me?",
+      "What's one thing you'd like us to do more often?",
+      "What's the most romantic gift you've ever received from me?",
+      "What's your favorite thing about our relationship?",
+      "What's one thing you'd like to improve in our relationship?",
     ],
-    // Add other categories as needed
+    fun: [
+      "If we could go on any adventure together, where would you want to go?",
+      "What's the funniest thing that's ever happened to us?",
+      "If we could switch lives for a day, what would you do?",
+      "What's your favorite inside joke between us?",
+      "What's the most fun date we've ever been on?",
+      "If we could have any superpower together, what would it be?",
+      "What's your favorite game or activity to do together?",
+      "What's the silliest thing we've ever done together?",
+      "If we could have a movie night, what would we watch?",
+      "What's your favorite way to make me laugh?",
+    ],
+    deep: [
+      "What's one thing you've always wanted to tell me but haven't?",
+      "What do you think is the strongest part of our relationship?",
+      "What's one thing you admire most about me?",
+      "What's one thing you think we need to work on together?",
+      "What's your biggest fear about our relationship?",
+      "What's one thing you'd like to achieve together in the next year?",
+      "What's the most meaningful moment we've shared?",
+      "What's one thing you'd like to learn about me?",
+      "What's one thing you'd like me to understand about you?",
+      "What's your favorite way we support each other?",
+    ],
+    future: [
+      "Where do you see us in 5 years?",
+      "What's one dream you'd like us to achieve together?",
+      "What's your ideal way to spend our future vacations?",
+      "What's one thing you'd like us to build or create together?",
+      "What's your vision for our future family?",
+      "What's one place you'd like us to visit together?",
+      "What's one goal you'd like us to work towards?",
+      "What's your favorite thing about planning a future with me?",
+      "What's one thing you'd like us to learn together?",
+      "What's your favorite way to imagine our future?",
+    ],
+    memories: [
+      "What's your favorite memory of us from the past year?",
+      "What's the first thing you remember about us?",
+      "What's your favorite photo of us and why?",
+      "What's one memory that always makes you smile?",
+      "What's the most unforgettable moment we've shared?",
+      "What's one memory you'd like to relive?",
+      "What's your favorite trip we've taken together?",
+      "What's one memory that makes you feel proud of us?",
+      "What's your favorite way we've celebrated something together?",
+      "What's one memory you'd like to create in the future?",
+    ],
   };
 
   // Generate random question cards
@@ -76,13 +129,13 @@ const CoupleCardGenerator = () => {
       const categoryQuestions = questionBanks[selectedCategory];
       const questionCount = Math.min(customOptions.questionCount, categoryQuestions.length);
 
-      const indices = new Set();
-      while (indices.size < questionCount) {
-        indices.add(Math.floor(Math.random() * categoryQuestions.length));
-      }
+      // Shuffle the questions array to get random questions
+      const shuffledQuestions = [...categoryQuestions].sort(() => Math.random() - 0.5);
 
-      indices.forEach((index) => {
-        const question = categoryQuestions[index];
+      // Slice the shuffled array to get the desired number of questions
+      const selectedQuestions = shuffledQuestions.slice(0, questionCount);
+
+      selectedQuestions.forEach((question) => {
         newCards.push({
           id: Date.now() + Math.random(),
           question: question,
