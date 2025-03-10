@@ -252,7 +252,7 @@ const FastTalkInterface = ({ onBackToDashboard }) => {
   };
 
   return (
-    <div className="flex flex-col items-center w-full max-w-4xl p-6 mx-auto bg-gradient-to-b from-white to-pink-50 rounded-xl shadow-lg">
+    <div className="flex flex-col items-center w-full max-w-4xl p-2 sm:p-4 md:p-6 mx-auto bg-gradient-to-b from-white to-pink-50 rounded-xl shadow-lg">
       {/* CSS for effects */}
       <style jsx>{`
         .green-glow {
@@ -300,62 +300,80 @@ const FastTalkInterface = ({ onBackToDashboard }) => {
           0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
           100% { transform: translateY(500px) rotate(360deg); opacity: 0; }
         }
+        
+        @media (max-width: 640px) {
+          .suggestion-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+          }
+          
+          .action-buttons {
+            flex-direction: column;
+            width: 100%;
+          }
+          
+          .action-buttons > button {
+            width: 100%;
+            margin-bottom: 0.5rem;
+          }
+        }
       `}</style>
     
       {/* Header with decorative elements */}
-      <div className="relative w-full flex flex-col items-center mb-8">
+      <div className="relative w-full flex flex-col items-center mb-4 sm:mb-6 md:mb-8">
         <button 
           onClick={onBackToDashboard}
-          className="self-start mb-6 bg-white text-pink-600 font-medium py-2 px-4 rounded-lg shadow hover:shadow-md transition-all flex items-center"
+          className="self-start mb-4 sm:mb-6 bg-white text-pink-600 text-sm sm:text-base font-medium py-1 sm:py-2 px-2 sm:px-4 rounded-lg shadow hover:shadow-md transition-all flex items-center"
         >
-          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <svg className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
           </svg>
-          Back to Dashboard
+          Back
         </button>
         
-        {/* Decorative hearts */}
-        <div className="absolute top-0 left-0">
+        {/* Decorative hearts - hidden on smallest screens */}
+        <div className="absolute top-0 left-0 hidden sm:block">
           <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#F9A8D4" opacity="0.6" />
           </svg>
         </div>
-        <div className="absolute top-0 right-0">
+        <div className="absolute top-0 right-0 hidden sm:block">
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#F9A8D4" opacity="0.4" />
           </svg>
         </div>
         
-        <h1 className="text-4xl font-bold text-center text-pink-600 mb-2">Couples Fast Talk</h1>
-        <div className="h-1 w-24 bg-gradient-to-r from-pink-300 to-pink-500 rounded-full mb-4"></div>
-        <p className="text-center text-gray-600 max-w-lg">Add questions for your partner to answer. Deepen your connection with quick, meaningful conversations.</p>
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-pink-600 mb-2">Couples Fast Talk</h1>
+        <div className="h-1 w-16 sm:w-24 bg-gradient-to-r from-pink-300 to-pink-500 rounded-full mb-2 sm:mb-4"></div>
+        <p className="text-center text-xs sm:text-sm md:text-base text-gray-600 max-w-lg px-2">Add questions for your partner to answer. Deepen your connection with quick, meaningful conversations.</p>
       </div>
 
       {isConfiguring ? (
         <>
           {/* Setup Phase UI */}
-          <div className="w-full bg-white rounded-xl shadow-md p-6 mb-6">
-            <h2 className="text-2xl font-semibold text-pink-600 mb-4 flex items-center">
-              <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <div className="w-full bg-white rounded-xl shadow-md p-3 sm:p-4 md:p-6 mb-4 sm:mb-6">
+            <h2 className="text-xl sm:text-2xl font-semibold text-pink-600 mb-3 sm:mb-4 flex items-center">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
               </svg>
               Create Your Questions
             </h2>
             
             {/* Question Input */}
-            <form onSubmit={handleAddQuestion} className="w-full mb-6">
-              <div className="flex">
+            <form onSubmit={handleAddQuestion} className="w-full mb-4 sm:mb-6">
+              <div className="flex flex-col sm:flex-row">
                 <input
                   type="text"
                   value={newQuestion}
                   onChange={(e) => setNewQuestion(e.target.value)}
                   placeholder="Type a question for your partner..."
-                  className="flex-grow px-4 py-3 text-gray-700 border border-pink-200 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-700 border border-pink-200 rounded-lg sm:rounded-l-lg sm:rounded-r-none focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent mb-2 sm:mb-0"
                   autoFocus
                 />
                 <button
                   type="submit"
-                  className="px-6 py-3 font-semibold text-white bg-gradient-to-r from-pink-500 to-pink-600 rounded-r-lg transition-all hover:from-pink-600 hover:to-pink-700 active:transform active:scale-95 shadow-md"
+                  className="px-4 sm:px-6 py-2 sm:py-3 font-semibold text-sm sm:text-base text-white bg-gradient-to-r from-pink-500 to-pink-600 rounded-lg sm:rounded-l-none sm:rounded-r-lg transition-all hover:from-pink-600 hover:to-pink-700 active:transform active:scale-95 shadow-md"
                 >
                   Add
                 </button>
@@ -363,21 +381,21 @@ const FastTalkInterface = ({ onBackToDashboard }) => {
             </form>
 
             {/* Question Suggestions */}
-            <div className="mb-6">
-              <h3 className="text-sm font-medium text-gray-500 mb-2">Need inspiration? Try these questions:</h3>
-              <div className="flex flex-wrap gap-2">
+            <div className="mb-4 sm:mb-6">
+              <h3 className="text-xs sm:text-sm font-medium text-gray-500 mb-1 sm:mb-2">Need inspiration? Try these questions:</h3>
+              <div className="flex flex-wrap gap-1 sm:gap-2 suggestion-container">
                 {questionSuggestions.slice(0, 4).map((question, idx) => (
                   <button
                     key={idx}
                     onClick={() => addSuggestedQuestion(question)}
-                    className="px-3 py-2 text-xs text-pink-700 bg-pink-50 rounded-full hover:bg-pink-100 transition-all"
+                    className="px-2 sm:px-3 py-1 sm:py-2 text-xxs sm:text-xs text-pink-700 bg-pink-50 rounded-full hover:bg-pink-100 transition-all"
                   >
                     {question}
                   </button>
                 ))}
                 <button
                   onClick={() => addSuggestedQuestion(questionSuggestions[Math.floor(Math.random() * questionSuggestions.length)])}
-                  className="px-3 py-2 text-xs text-purple-700 bg-purple-50 rounded-full hover:bg-purple-100 transition-all"
+                  className="px-2 sm:px-3 py-1 sm:py-2 text-xxs sm:text-xs text-purple-700 bg-purple-50 rounded-full hover:bg-purple-100 transition-all"
                 >
                   + Random Question
                 </button>
@@ -385,38 +403,38 @@ const FastTalkInterface = ({ onBackToDashboard }) => {
             </div>
 
             {/* Questions List */}
-            <div className="w-full mb-6 p-5 bg-gray-50 rounded-lg shadow-sm">
-              <h2 className="text-xl font-semibold text-gray-700 mb-4 flex items-center">
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <div className="w-full mb-4 sm:mb-6 p-2 sm:p-5 bg-gray-50 rounded-lg shadow-sm">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-700 mb-2 sm:mb-4 flex items-center">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                 </svg>
                 Your Questions 
-                <span className="ml-2 text-sm bg-pink-100 text-pink-800 py-1 px-2 rounded-full">
+                <span className="ml-2 text-xs sm:text-sm bg-pink-100 text-pink-800 py-0.5 sm:py-1 px-1 sm:px-2 rounded-full">
                   {questions.length}
                 </span>
               </h2>
-              <div className="max-h-64 overflow-y-auto">
+              <div className="max-h-48 sm:max-h-64 overflow-y-auto">
                 {questions.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-300 rounded-lg">
-                    <svg className="w-12 h-12 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <div className="flex flex-col items-center justify-center p-4 sm:p-6 border-2 border-dashed border-gray-300 rounded-lg">
+                    <svg className="w-8 h-8 sm:w-12 sm:h-12 text-gray-400 mb-1 sm:mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
-                    <p className="text-gray-500 text-center mb-2">No questions yet</p>
-                    <p className="text-sm text-gray-400 text-center">Add questions above or select from our suggestions</p>
+                    <p className="text-sm sm:text-base text-gray-500 text-center mb-1 sm:mb-2">No questions yet</p>
+                    <p className="text-xs sm:text-sm text-gray-400 text-center">Add questions above or select from our suggestions</p>
                   </div>
                 ) : (
-                  <ul className="space-y-3">
+                  <ul className="space-y-2 sm:space-y-3">
                     {questions.map((q, index) => (
-                      <li key={index} className="p-3 bg-white rounded-lg border border-gray-100 shadow-sm flex justify-between items-center question-card">
-                        <div className="flex items-center flex-grow">
-                          <span className="flex items-center justify-center min-w-8 h-8 mr-3 bg-pink-100 text-pink-600 rounded-full text-sm font-semibold">{index + 1}</span>
-                          <span className="text-gray-700">{q}</span>
+                      <li key={index} className="p-2 sm:p-3 bg-white rounded-lg border border-gray-100 shadow-sm flex justify-between items-center question-card text-xs sm:text-sm">
+                        <div className="flex items-center flex-grow overflow-hidden">
+                          <span className="flex-shrink-0 flex items-center justify-center min-w-6 sm:min-w-8 h-6 sm:h-8 mr-2 sm:mr-3 bg-pink-100 text-pink-600 rounded-full text-xs sm:text-sm font-semibold">{index + 1}</span>
+                          <span className="text-gray-700 truncate">{q}</span>
                         </div>
                         <button 
                           onClick={() => removeQuestion(index)}
-                          className="text-gray-400 hover:text-red-500 transition-colors ml-2"
+                          className="text-gray-400 hover:text-red-500 transition-colors ml-1 sm:ml-2 flex-shrink-0"
                         >
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                           </svg>
                         </button>
@@ -428,26 +446,26 @@ const FastTalkInterface = ({ onBackToDashboard }) => {
             </div>
 
             {/* Timer Configuration */}
-            <div className="w-full mb-8 flex items-center justify-between p-5 bg-gray-50 rounded-lg shadow-sm">
-              <div>
-                <h2 className="text-xl font-semibold text-gray-700 flex items-center">
-                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <div className="w-full mb-4 sm:mb-8 flex flex-col sm:flex-row sm:items-center justify-between p-2 sm:p-5 bg-gray-50 rounded-lg shadow-sm">
+              <div className="mb-2 sm:mb-0">
+                <h2 className="text-lg sm:text-xl font-semibold text-gray-700 flex items-center">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                   </svg>
                   Time Per Question
                 </h2>
-                <div className="flex items-center mt-2">
-                  <div className="w-12 h-12 flex items-center justify-center bg-pink-100 text-pink-600 rounded-full text-xl font-bold mr-3">
+                <div className="flex items-center mt-1 sm:mt-2">
+                  <div className="w-8 h-8 sm:w-12 sm:h-12 flex items-center justify-center bg-pink-100 text-pink-600 rounded-full text-base sm:text-xl font-bold mr-2 sm:mr-3">
                     {timerPerQuestion}
                   </div>
-                  <p className="text-gray-600">seconds to answer each question</p>
+                  <p className="text-xs sm:text-sm md:text-base text-gray-600">seconds to answer each question</p>
                 </div>
               </div>
               <button
                 onClick={openTimerModal}
-                className="px-4 py-2 text-white bg-gradient-to-r from-pink-500 to-pink-600 rounded-lg hover:from-pink-600 hover:to-pink-700 transition-all flex items-center shadow-md"
+                className="px-3 sm:px-4 py-1 sm:py-2 text-sm text-white bg-gradient-to-r from-pink-500 to-pink-600 rounded-lg hover:from-pink-600 hover:to-pink-700 transition-all flex items-center justify-center shadow-md mt-2 sm:mt-0"
               >
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <svg className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                 </svg>
@@ -458,7 +476,7 @@ const FastTalkInterface = ({ onBackToDashboard }) => {
             {/* Start Button */}
             <button
               onClick={startSession}
-              className={`w-full px-6 py-4 mb-8 text-lg font-semibold text-white rounded-lg shadow-lg transition-all ${
+              className={`w-full px-4 sm:px-6 py-3 sm:py-4 mb-4 sm:mb-8 text-base sm:text-lg font-semibold text-white rounded-lg shadow-lg transition-all ${
                 questions.length === 0 
                   ? 'bg-gray-400 cursor-not-allowed' 
                   : 'bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 active:transform active:scale-98'
@@ -469,8 +487,8 @@ const FastTalkInterface = ({ onBackToDashboard }) => {
                 "Add Questions to Start"
               ) : (
                 <>
-                  <span className="mr-2">Start Couples Fast Talk</span>
-                  <svg className="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <span className="mr-1 sm:mr-2">Start Couples Fast Talk</span>
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                   </svg>
                 </>
@@ -481,258 +499,99 @@ const FastTalkInterface = ({ onBackToDashboard }) => {
       ) : (
         <>
           {/* Game Phase UI */}
-          <div className="w-full bg-white rounded-xl shadow-md p-6 mb-6">
+          <div className="w-full bg-white rounded-xl shadow-md p-3 sm:p-4 md:p-6 mb-4 sm:mb-6">
             {/* Timer Display */}
-            <div className="w-full mb-6 p-4 flex flex-col items-center justify-center bg-gray-50 rounded-lg shadow-sm">
-              <div className="flex justify-between w-full mb-4">
+            <div className="w-full mb-4 sm:mb-6 p-2 sm:p-4 flex flex-col items-center justify-center bg-gray-50 rounded-lg shadow-sm">
+              <div className="flex flex-col sm:flex-row justify-between w-full mb-2 sm:mb-4 gap-2 sm:gap-0">
                 <div className="flex items-center">
-                  <svg className="w-5 h-5 text-pink-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 text-pink-500 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                   </svg>
-                  <p className="text-lg font-medium">
-                    Question {currentQuestionIndex + 1} of {questions.length}
-                  </p>
+                  <span className="text-sm sm:text-base text-gray-700">Time Remaining</span>
                 </div>
-                <div className="flex items-center">
-                  <div className="flex items-center">
-                    <svg className="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                    </svg>
-                    <p className="text-lg font-medium text-green-600">
-                      Score: {score}/{questions.length}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className={`py-4 px-8 rounded-full ${timeRemaining <= 10 ? 'bg-red-100' : 'bg-pink-100'} mb-2`}>
-                <span className={`text-5xl font-bold ${timeRemaining <= 10 ? 'text-red-500' : 'text-pink-600'}`}>
+                <div className={`text-2xl sm:text-3xl font-bold ${timeRemaining <= 10 ? 'text-red-500' : 'text-pink-600'}`}>
                   {formatTime(timeRemaining)}
-                </span>
+                </div>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
-                <div 
-                  className={`${timeRemaining <= 10 ? 'bg-red-500' : 'bg-pink-500'} h-2 rounded-full transition-all`}
+              <div className="w-full bg-gray-200 rounded-full h-2 sm:h-3">
+                <div
+                  className={`h-2 sm:h-3 rounded-full transition-all duration-1000 ease-linear ${
+                    timeRemaining <= 10 ? 'bg-red-500' : 'bg-pink-500'
+                  }`}
                   style={{ width: `${(timeRemaining / timerPerQuestion) * 100}%` }}
                 ></div>
               </div>
             </div>
 
-            {/* Question Progress Indicators */}
-            <div className="w-full mb-6 flex justify-center">
-              <div className="flex space-x-2">
-                {questions.map((_, idx) => (
-                  <div 
-                    key={idx} 
-                    className={`w-8 h-2 rounded-full transition-all ${
-                      currentQuestionIndex === idx ? 'bg-pink-500 w-12' : 
-                      answeredQuestions.includes(idx) ? 'bg-green-500' : 
-                      failedQuestions.includes(idx) ? 'bg-red-400' : 'bg-gray-300'
-                    }`}
-                  ></div>
-                ))}
-              </div>
+            {/* Current Question Display */}
+            <div className={`w-full mb-4 sm:mb-6 p-4 sm:p-6 bg-white rounded-lg shadow-md border-2 border-pink-100 ${cardGlowEffect} transition-all duration-300`}>
+              <h2 className="text-lg sm:text-xl font-semibold text-pink-600 mb-2 sm:mb-4 flex items-center">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Question {currentQuestionIndex + 1} of {questions.length}
+              </h2>
+              <p className="text-base sm:text-lg text-gray-700">{questions[currentQuestionIndex]}</p>
             </div>
 
             {/* Action Buttons */}
-            <div className="flex space-x-4 mb-6 justify-center w-full">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 action-buttons">
               <button
                 onClick={markAsAnswered}
-                className="px-6 py-4 font-semibold text-white bg-gradient-to-r from-green-500 to-green-600 rounded-lg shadow-md hover:from-green-600 hover:to-green-700 transition-all flex items-center justify-center"
+                className="flex-1 px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-semibold text-white bg-green-500 rounded-lg shadow-md hover:bg-green-600 transition-all flex items-center justify-center"
               >
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                 </svg>
-                Got It!
+                Correct Answer
               </button>
               <button
                 onClick={nextQuestion}
-                className="px-6 py-4 font-semibold text-white bg-gradient-to-r from-blue-400 to-blue-500 rounded-lg shadow-md hover:from-blue-500 hover:to-blue-600 transition-all flex items-center justify-center"
+                className="flex-1 px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-semibold text-white bg-red-500 rounded-lg shadow-md hover:bg-red-600 transition-all flex items-center justify-center"
               >
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
-                Skip / Next
+                Skip Question
               </button>
             </div>
-
-            {/* Current Question Card */}
-            <div className={`w-full p-6 mb-6 bg-white rounded-lg shadow-md ${cardGlowEffect}`}>
-              <h2 className="text-2xl font-semibold text-gray-700 mb-4 flex items-center justify-center">
-                <svg className="w-6 h-6 mr-2 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                Current Question
-              </h2>
-              <div className="text-center p-8 bg-pink-50 rounded-lg mb-4">
-                <p className="text-3xl text-gray-800 font-medium leading-relaxed">
-                  {questions[currentQuestionIndex]}
-                </p>
-              </div>
-              {timeExpired && (
-                <div className="w-full flex justify-center">
-                  <div className="px-4 py-2 bg-red-100 text-red-700 rounded-lg flex items-center">
-                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    Time's up! Moving to the next question...
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Reset Button */}
-            <button
-              onClick={resetSession}
-              className="px-4 py-2 text-pink-600 border border-pink-300 rounded-lg hover:bg-pink-50 transition-all flex items-center justify-center mb-4"
-            >
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-              </svg>
-              Reset & Configure New Game
-            </button>
           </div>
         </>
       )}
 
-      {/* Game Completed UI */}
-      {gameCompleted && (
-        <div className="w-full bg-white rounded-xl shadow-md p-6 mb-6">
-          <div className="flex flex-col items-center">
-            {/* Confetti animation - just adding a few static elements for visualization */}
-            <div className="relative w-full h-32">
-              <div className="confetti" style={{ left: '10%', animationDelay: '0.2s', backgroundColor: '#F472B6' }}></div>
-              <div className="confetti" style={{ left: '20%', animationDelay: '0.5s', backgroundColor: '#38BDF8' }}></div>
-              <div className="confetti" style={{ left: '30%', animationDelay: '0.1s', backgroundColor: '#A78BFA' }}></div>
-              <div className="confetti" style={{ left: '40%', animationDelay: '0.7s', backgroundColor: '#FB923C' }}></div>
-              <div className="confetti" style={{ left: '50%', animationDelay: '0.3s', backgroundColor: '#4ADE80' }}></div>
-              <div className="confetti" style={{ left: '60%', animationDelay: '0.6s', backgroundColor: '#F472B6' }}></div>
-              <div className="confetti" style={{ left: '70%', animationDelay: '0.2s', backgroundColor: '#38BDF8' }}></div>
-              <div className="confetti" style={{ left: '80%', animationDelay: '0.4s', backgroundColor: '#A78BFA' }}></div>
-              <div className="confetti" style={{ left: '90%', animationDelay: '0.5s', backgroundColor: '#FB923C' }}></div>
-            </div>
-
-            <h2 className="text-3xl font-bold text-center text-pink-600 mb-4">Session Complete!</h2>
-            <div className="h-1 w-24 bg-gradient-to-r from-pink-300 to-pink-500 rounded-full mb-6"></div>
-            
-            <div className="w-32 h-32 flex items-center justify-center bg-pink-100 text-pink-600 rounded-full mb-6">
-              <div className="text-center">
-                <div className="text-4xl font-bold">{score}</div>
-                <div className="text-sm">of {questions.length}</div>
-              </div>
-            </div>
-            
-            <p className="text-xl text-center text-gray-700 mb-6 max-w-lg">
-              {getFeedbackMessage()}
-            </p>
-            
-            <div className="w-full bg-gray-50 rounded-lg p-5 mb-6">
-              <h3 className="text-lg font-semibold text-gray-700 mb-4">Question Breakdown</h3>
-              <div className="space-y-3 max-h-64 overflow-y-auto">
-                {questions.map((q, index) => (
-                  <div 
-                    key={index} 
-                    className={`p-3 rounded-lg flex items-start ${
-                      answeredQuestions.includes(index) 
-                        ? 'bg-green-50 border border-green-100' 
-                        : 'bg-red-50 border border-red-100'
-                    }`}
-                  >
-                    <div 
-                      className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center mr-3 ${
-                        answeredQuestions.includes(index) 
-                          ? 'bg-green-500 text-white' 
-                          : 'bg-red-400 text-white'
-                      }`}
-                    >
-                      {answeredQuestions.includes(index) ? (
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                        </svg>
-                      ) : (
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                      )}
-                    </div>
-                    <div>
-                      <p className={`font-medium ${
-                        answeredQuestions.includes(index) 
-                          ? 'text-green-700' 
-                          : 'text-red-700'
-                      }`}>
-                        Question {index + 1}
-                      </p>
-                      <p className="text-gray-700">{q}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            <div className="flex space-x-4">
-              <button
-                onClick={resetSession}
-                className="px-6 py-3 font-semibold text-pink-600 bg-white border-2 border-pink-500 rounded-lg hover:bg-pink-50 transition-all shadow-md"
-              >
-                <svg className="w-5 h-5 mr-2 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                </svg>
-                Play Again
-              </button>
-              <button
-                onClick={onBackToDashboard}
-                className="px-6 py-3 font-semibold text-white bg-gradient-to-r from-pink-500 to-pink-600 rounded-lg shadow-md hover:from-pink-600 hover:to-pink-700 transition-all"
-              >
-                Back to Dashboard
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Timer Configuration Modal */}
       {showTimerModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 max-w-md w-full">
-            <h2 className="text-2xl font-semibold text-gray-700 mb-4">Timer Settings</h2>
-            <div className="mb-4">
-              <label className="block text-gray-700 mb-2">Time per question (seconds)</label>
-              <input
-                type="number"
-                value={timerInput}
-                onChange={(e) => setTimerInput(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                min="5"
-              />
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 w-full max-w-md">
+            <h2 className="text-lg sm:text-xl font-semibold text-pink-600 mb-4">Set Timer Duration</h2>
+            <input
+              type="number"
+              value={timerInput}
+              onChange={(e) => setTimerInput(e.target.value)}
+              className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-700 border border-pink-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent mb-4"
+              placeholder="Enter time in seconds"
+            />
+            <div className="flex flex-wrap gap-2 mb-4">
+              {timerOptions.map((time) => (
+                <button
+                  key={time}
+                  onClick={() => setTimerInput(time.toString())}
+                  className="px-3 sm:px-4 py-1 sm:py-2 text-sm text-pink-700 bg-pink-50 rounded-lg hover:bg-pink-100 transition-all"
+                >
+                  {time} seconds
+                </button>
+              ))}
             </div>
-            <div className="mb-4">
-              <p className="text-sm text-gray-500 mb-2">Quick select:</p>
-              <div className="flex flex-wrap gap-2">
-                {timerOptions.map((time) => (
-                  <button
-                    key={time}
-                    onClick={() => setTimerInput(time.toString())}
-                    className={`px-3 py-1 text-sm rounded-full transition-all ${
-                      parseInt(timerInput) === time
-                        ? 'bg-pink-500 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    {time}s
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="flex justify-end space-x-3">
+            <div className="flex justify-end gap-2">
               <button
                 onClick={closeTimerModal}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                className="px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-semibold text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
               >
                 Cancel
               </button>
               <button
                 onClick={saveTimerConfig}
-                className="px-4 py-2 text-white bg-gradient-to-r from-pink-500 to-pink-600 rounded-lg hover:from-pink-600 hover:to-pink-700 transition-all"
+                className="px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-semibold text-white bg-pink-500 rounded-lg hover:bg-pink-600 transition-all"
               >
                 Save
               </button>
@@ -741,7 +600,24 @@ const FastTalkInterface = ({ onBackToDashboard }) => {
         </div>
       )}
 
-     
+      {/* Game Completion Modal */}
+      {gameCompleted && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 w-full max-w-md text-center">
+            <h2 className="text-lg sm:text-xl font-semibold text-pink-600 mb-4">Game Completed!</h2>
+            <p className="text-sm sm:text-base text-gray-700 mb-4">{getFeedbackMessage()}</p>
+            <p className="text-sm sm:text-base text-gray-700 mb-4">
+              You answered {score} out of {questions.length} questions correctly.
+            </p>
+            <button
+              onClick={resetSession}
+              className="px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-semibold text-white bg-pink-500 rounded-lg hover:bg-pink-600 transition-all"
+            >
+              Play Again
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
