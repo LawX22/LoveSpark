@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 const FastTalkInterface = ({ onBackToDashboard }) => {
   const [newQuestion, setNewQuestion] = useState('');
   const [questions, setQuestions] = useState([]);
-  const [timerPerQuestion, setTimerPerQuestion] = useState(60); // Default 60 seconds
+  const [timerPerQuestion, setTimerPerQuestion] = useState(60);
   const [timerInput, setTimerInput] = useState('60');
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [isActive, setIsActive] = useState(false);
@@ -18,6 +18,18 @@ const FastTalkInterface = ({ onBackToDashboard }) => {
   const [gameCompleted, setGameCompleted] = useState(false);
   const [timeExpired, setTimeExpired] = useState(false);
   const [cardGlowEffect, setCardGlowEffect] = useState('');
+  
+  // Sample question suggestions to inspire users
+  const questionSuggestions = [
+    "What's your favorite memory of us together?",
+    "What small thing do I do that makes you smile?",
+    "If we could travel anywhere right now, where would you want to go?",
+    "What's one thing you want us to try together this year?",
+    "What was your first impression of me?",
+    "What's something I do that you find adorable?",
+    "If you could change one thing about our relationship, what would it be?",
+    "What's one thing you've always wanted to tell me but haven't?",
+  ];
 
   // Handle timer countdown
   useEffect(() => {
@@ -27,7 +39,6 @@ const FastTalkInterface = ({ onBackToDashboard }) => {
       interval = setInterval(() => {
         setTimeRemaining(time => time - 1);
         
-        // Warning when time is running low (less than 10 seconds)
         if (timeRemaining <= 10) {
           setTimeExpired(false);
         }
@@ -35,11 +46,9 @@ const FastTalkInterface = ({ onBackToDashboard }) => {
     } else if (timeRemaining === 0 && isActive) {
       clearInterval(interval);
       
-      // Time's up for current question
       setTimeExpired(true);
       setCardGlowEffect('red-glow');
       
-      // Add to failed questions list
       if (!failedQuestions.includes(currentQuestionIndex)) {
         setFailedQuestions(prev => [...prev, currentQuestionIndex]);
       }
@@ -50,22 +59,18 @@ const FastTalkInterface = ({ onBackToDashboard }) => {
     return () => clearInterval(interval);
   }, [isActive, timeRemaining]);
 
-  // Handle when time is up for a question
   const handleTimeUp = () => {
     if (currentQuestionIndex < questions.length - 1) {
-      // Move to next question
       setTimeout(() => {
         goToNextQuestion();
-      }, 1500); // Brief delay to show the red glow
+      }, 1500);
     } else {
-      // End of all questions
       setTimeout(() => {
         endSession();
-      }, 1500); // Brief delay to show the red glow
+      }, 1500);
     }
   };
 
-  // Go to next question
   const goToNextQuestion = () => {
     setCurrentQuestionIndex(prevIndex => prevIndex + 1);
     setTimeRemaining(timerPerQuestion);
@@ -74,14 +79,12 @@ const FastTalkInterface = ({ onBackToDashboard }) => {
     setCardGlowEffect('');
   };
 
-  // End the session
   const endSession = () => {
     setIsActive(false);
     setIsPlaying(false);
     setGameCompleted(true);
   };
 
-  // Handle question submission
   const handleAddQuestion = (e) => {
     e.preventDefault();
     if (newQuestion.trim() !== '') {
@@ -90,7 +93,11 @@ const FastTalkInterface = ({ onBackToDashboard }) => {
     }
   };
 
-  // Remove a question
+  // Add a suggested question to the list
+  const addSuggestedQuestion = (question) => {
+    setQuestions(prevQuestions => [...prevQuestions, question]);
+  };
+
   const removeQuestion = (index) => {
     setQuestions(prevQuestions => {
       const updatedQuestions = [...prevQuestions];
@@ -99,7 +106,6 @@ const FastTalkInterface = ({ onBackToDashboard }) => {
     });
   };
 
-  // Start the question session
   const startSession = () => {
     if (questions.length === 0) {
       alert('Please add at least one question before starting');
@@ -126,7 +132,6 @@ const FastTalkInterface = ({ onBackToDashboard }) => {
     }
   };
 
-  // Reset the session
   const resetSession = () => {
     setIsActive(false);
     setIsPlaying(false);
@@ -142,27 +147,22 @@ const FastTalkInterface = ({ onBackToDashboard }) => {
     setCardGlowEffect('');
   };
 
-  // Format time as MM:SS
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Timer duration options
   const timerOptions = [15, 30, 60, 90, 120];
 
-  // Open timer configuration modal
   const openTimerModal = () => {
     setShowTimerModal(true);
   };
 
-  // Close timer configuration modal
   const closeTimerModal = () => {
     setShowTimerModal(false);
   };
 
-  // Save timer configuration
   const saveTimerConfig = () => {
     const parsedTime = parseInt(timerInput);
     if (!isNaN(parsedTime) && parsedTime > 0) {
@@ -173,68 +173,54 @@ const FastTalkInterface = ({ onBackToDashboard }) => {
     }
   };
 
-  // Close the question modal and ensure timer is running
   const handleCloseModal = () => {
     setShowQuestionModal(false);
   };
 
-  // Mark question as answered correctly
   const markAsAnswered = () => {
     if (!answeredQuestions.includes(currentQuestionIndex)) {
       setScore(prevScore => prevScore + 1);
       setAnsweredQuestions(prevAnswered => [...prevAnswered, currentQuestionIndex]);
       
-      // Remove from failed questions if it was there
       setFailedQuestions(prev => prev.filter(idx => idx !== currentQuestionIndex));
       
-      // Set the green glow effect
       setCardGlowEffect('green-glow');
       
-      // Remove the glow effect after a delay
       setTimeout(() => {
-        // Automatically go to the next question after marking as answered
         if (currentQuestionIndex < questions.length - 1) {
           goToNextQuestion();
         } else {
-          // End of all questions
           endSession();
         }
-      }, 1500); // Allow time to see the green glow
+      }, 1500);
     }
   };
 
-  // Show current question in modal
   const showCurrentQuestion = () => {
     setShowQuestionModal(true);
   };
 
-  // Skip to next question
   const nextQuestion = () => {
-    // If it wasn't answered yet, mark it as failed
     if (!answeredQuestions.includes(currentQuestionIndex) && !failedQuestions.includes(currentQuestionIndex)) {
       setFailedQuestions(prev => [...prev, currentQuestionIndex]);
       setCardGlowEffect('red-glow');
       
-      // Delay going to next question to show the red effect
       setTimeout(() => {
         if (currentQuestionIndex < questions.length - 1) {
           goToNextQuestion();
         } else {
-          // End of all questions
           endSession();
         }
-      }, 1500); // Allow time to see the red glow
+      }, 1500);
     } else {
       if (currentQuestionIndex < questions.length - 1) {
         goToNextQuestion();
       } else {
-        // End of all questions
         endSession();
       }
     }
   };
 
-  // Get feedback message based on score percentage
   const getFeedbackMessage = () => {
     if (questions.length === 0) return "You didn't answer any questions together.";
     
@@ -266,8 +252,8 @@ const FastTalkInterface = ({ onBackToDashboard }) => {
   };
 
   return (
-    <div className="flex flex-col items-center w-full max-w-4xl p-4 mx-auto bg-white rounded-xl shadow-md">
-      {/* CSS for glow effects */}
+    <div className="flex flex-col items-center w-full max-w-4xl p-6 mx-auto bg-gradient-to-b from-white to-pink-50 rounded-xl shadow-lg">
+      {/* CSS for effects */}
       <style jsx>{`
         .green-glow {
           box-shadow: 0 0 20px rgba(16, 185, 129, 0.7);
@@ -292,333 +278,470 @@ const FastTalkInterface = ({ onBackToDashboard }) => {
           50% { box-shadow: 0 0 30px rgba(239, 68, 68, 0.8); }
           100% { box-shadow: 0 0 15px rgba(239, 68, 68, 0.5); }
         }
+        
+        .question-card {
+          transition: all 0.3s ease;
+        }
+        
+        .question-card:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .confetti {
+          position: absolute;
+          width: 10px;
+          height: 10px;
+          background-color: #f687b3;
+          animation: confetti-fall 3s ease-in-out infinite;
+        }
+        
+        @keyframes confetti-fall {
+          0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+          100% { transform: translateY(500px) rotate(360deg); opacity: 0; }
+        }
       `}</style>
     
-      {/* Back button */}
-      <button 
-        onClick={onBackToDashboard}
-        className="self-start mb-6 bg-white text-pink-600 font-medium py-2 px-4 rounded-lg shadow hover:shadow-md transition-all flex items-center"
-      >
-        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-        </svg>
-        Back to Dashboard
-      </button>
-      
-      <h1 className="mb-6 text-3xl font-bold text-center text-pink-600">Couples Fast Talk</h1>
-      <p className="text-center text-gray-600 mb-8">Add questions for your partner to answer. Deepen your connection with quick, meaningful conversations.</p>
+      {/* Header with decorative elements */}
+      <div className="relative w-full flex flex-col items-center mb-8">
+        <button 
+          onClick={onBackToDashboard}
+          className="self-start mb-6 bg-white text-pink-600 font-medium py-2 px-4 rounded-lg shadow hover:shadow-md transition-all flex items-center"
+        >
+          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+          Back to Dashboard
+        </button>
+        
+        {/* Decorative hearts */}
+        <div className="absolute top-0 left-0">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#F9A8D4" opacity="0.6" />
+          </svg>
+        </div>
+        <div className="absolute top-0 right-0">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#F9A8D4" opacity="0.4" />
+          </svg>
+        </div>
+        
+        <h1 className="text-4xl font-bold text-center text-pink-600 mb-2">Couples Fast Talk</h1>
+        <div className="h-1 w-24 bg-gradient-to-r from-pink-300 to-pink-500 rounded-full mb-4"></div>
+        <p className="text-center text-gray-600 max-w-lg">Add questions for your partner to answer. Deepen your connection with quick, meaningful conversations.</p>
+      </div>
 
       {isConfiguring ? (
         <>
-          {/* Question Input */}
-          <form onSubmit={handleAddQuestion} className="w-full mb-6">
-            <div className="flex">
-              <input
-                type="text"
-                value={newQuestion}
-                onChange={(e) => setNewQuestion(e.target.value)}
-                placeholder="Type a question for your partner..."
-                className="flex-grow px-3 py-3 text-gray-700 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
-                autoFocus
-              />
+          {/* Setup Phase UI */}
+          <div className="w-full bg-white rounded-xl shadow-md p-6 mb-6">
+            <h2 className="text-2xl font-semibold text-pink-600 mb-4 flex items-center">
+              <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+              </svg>
+              Create Your Questions
+            </h2>
+            
+            {/* Question Input */}
+            <form onSubmit={handleAddQuestion} className="w-full mb-6">
+              <div className="flex">
+                <input
+                  type="text"
+                  value={newQuestion}
+                  onChange={(e) => setNewQuestion(e.target.value)}
+                  placeholder="Type a question for your partner..."
+                  className="flex-grow px-4 py-3 text-gray-700 border border-pink-200 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  autoFocus
+                />
+                <button
+                  type="submit"
+                  className="px-6 py-3 font-semibold text-white bg-gradient-to-r from-pink-500 to-pink-600 rounded-r-lg transition-all hover:from-pink-600 hover:to-pink-700 active:transform active:scale-95 shadow-md"
+                >
+                  Add
+                </button>
+              </div>
+            </form>
+
+            {/* Question Suggestions */}
+            <div className="mb-6">
+              <h3 className="text-sm font-medium text-gray-500 mb-2">Need inspiration? Try these questions:</h3>
+              <div className="flex flex-wrap gap-2">
+                {questionSuggestions.slice(0, 4).map((question, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => addSuggestedQuestion(question)}
+                    className="px-3 py-2 text-xs text-pink-700 bg-pink-50 rounded-full hover:bg-pink-100 transition-all"
+                  >
+                    {question}
+                  </button>
+                ))}
+                <button
+                  onClick={() => addSuggestedQuestion(questionSuggestions[Math.floor(Math.random() * questionSuggestions.length)])}
+                  className="px-3 py-2 text-xs text-purple-700 bg-purple-50 rounded-full hover:bg-purple-100 transition-all"
+                >
+                  + Random Question
+                </button>
+              </div>
+            </div>
+
+            {/* Questions List */}
+            <div className="w-full mb-6 p-5 bg-gray-50 rounded-lg shadow-sm">
+              <h2 className="text-xl font-semibold text-gray-700 mb-4 flex items-center">
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                </svg>
+                Your Questions 
+                <span className="ml-2 text-sm bg-pink-100 text-pink-800 py-1 px-2 rounded-full">
+                  {questions.length}
+                </span>
+              </h2>
+              <div className="max-h-64 overflow-y-auto">
+                {questions.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-300 rounded-lg">
+                    <svg className="w-12 h-12 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <p className="text-gray-500 text-center mb-2">No questions yet</p>
+                    <p className="text-sm text-gray-400 text-center">Add questions above or select from our suggestions</p>
+                  </div>
+                ) : (
+                  <ul className="space-y-3">
+                    {questions.map((q, index) => (
+                      <li key={index} className="p-3 bg-white rounded-lg border border-gray-100 shadow-sm flex justify-between items-center question-card">
+                        <div className="flex items-center flex-grow">
+                          <span className="flex items-center justify-center min-w-8 h-8 mr-3 bg-pink-100 text-pink-600 rounded-full text-sm font-semibold">{index + 1}</span>
+                          <span className="text-gray-700">{q}</span>
+                        </div>
+                        <button 
+                          onClick={() => removeQuestion(index)}
+                          className="text-gray-400 hover:text-red-500 transition-colors ml-2"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                          </svg>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+
+            {/* Timer Configuration */}
+            <div className="w-full mb-8 flex items-center justify-between p-5 bg-gray-50 rounded-lg shadow-sm">
+              <div>
+                <h2 className="text-xl font-semibold text-gray-700 flex items-center">
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  Time Per Question
+                </h2>
+                <div className="flex items-center mt-2">
+                  <div className="w-12 h-12 flex items-center justify-center bg-pink-100 text-pink-600 rounded-full text-xl font-bold mr-3">
+                    {timerPerQuestion}
+                  </div>
+                  <p className="text-gray-600">seconds to answer each question</p>
+                </div>
+              </div>
               <button
-                type="submit"
-                className="px-6 py-3 font-semibold text-white bg-pink-500 rounded-r-lg transition-all hover:bg-pink-600 active:transform active:scale-95"
+                onClick={openTimerModal}
+                className="px-4 py-2 text-white bg-gradient-to-r from-pink-500 to-pink-600 rounded-lg hover:from-pink-600 hover:to-pink-700 transition-all flex items-center shadow-md"
               >
-                Add
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+                Configure
               </button>
             </div>
-          </form>
 
-          {/* Questions List */}
-          <div className="w-full mb-6 p-4 bg-gray-50 rounded-lg shadow-sm">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">Your Questions ({questions.length})</h2>
-            <div className="max-h-64 overflow-y-auto">
-              {questions.length === 0 ? (
-                <p className="text-gray-500 italic text-center py-4">No questions yet. Try some relationship-building questions!</p>
-              ) : (
-                <ul className="space-y-2">
-                  {questions.map((q, index) => (
-                    <li key={index} className="p-3 bg-white rounded-lg border border-gray-100 flex justify-between items-center">
-                      <div className="flex flex-grow">
-                        <span className="mr-2 text-pink-500 font-medium">{index + 1}.</span>
-                        <span>{q}</span>
-                      </div>
-                      <button 
-                        onClick={() => removeQuestion(index)}
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                        </svg>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          </div>
-
-          {/* Timer Display (now just a button to open the modal) */}
-          <div className="w-full mb-8 flex items-center justify-between p-4 bg-gray-50 rounded-lg shadow-sm">
-            <div>
-              <h2 className="text-xl font-semibold text-gray-700">Time Per Question</h2>
-              <p className="text-gray-600 mt-1">Currently set to: <span className="font-medium text-pink-600">{timerPerQuestion} seconds</span></p>
-            </div>
+            {/* Start Button */}
             <button
-              onClick={openTimerModal}
-              className="px-4 py-2 text-white bg-pink-500 rounded-lg hover:bg-pink-600 transition-all flex items-center"
+              onClick={startSession}
+              className={`w-full px-6 py-4 mb-8 text-lg font-semibold text-white rounded-lg shadow-lg transition-all ${
+                questions.length === 0 
+                  ? 'bg-gray-400 cursor-not-allowed' 
+                  : 'bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 active:transform active:scale-98'
+              }`}
+              disabled={questions.length === 0}
             >
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-              </svg>
-              Configure Timer
+              {questions.length === 0 ? (
+                "Add Questions to Start"
+              ) : (
+                <>
+                  <span className="mr-2">Start Couples Fast Talk</span>
+                  <svg className="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                  </svg>
+                </>
+              )}
             </button>
           </div>
-
-          {/* Start Button */}
-          <button
-            onClick={startSession}
-            className={`px-6 py-3 mb-8 text-lg font-semibold text-white rounded-lg shadow-md transition-all ${
-              questions.length === 0 
-                ? 'bg-gray-400 cursor-not-allowed' 
-                : 'bg-pink-500 hover:bg-pink-600 active:transform active:scale-95'
-            }`}
-            disabled={questions.length === 0}
-          >
-            Start Couples Fast Talk
-          </button>
         </>
       ) : (
         <>
-          {/* Timer Display */}
-          <div className="w-full mb-6 p-4 flex flex-col items-center justify-center bg-gray-50 rounded-lg shadow-sm">
-            <div className="flex justify-between w-full mb-2">
-              <p className="text-lg font-medium">
-                Question {currentQuestionIndex + 1} of {questions.length}
-              </p>
-              <p className="text-lg font-medium text-green-600">
-                Connection: {score}/{questions.length}
-              </p>
-            </div>
-            <div className={`text-4xl font-bold ${timeRemaining <= 10 ? 'text-red-500' : 'text-pink-500'}`}>
-              {formatTime(timeRemaining)}
-            </div>
-          </div>
-
-          {/* Question Status Indicators */}
-          <div className="w-full mb-4 flex justify-center">
-            <div className="flex space-x-2">
-              {questions.map((_, idx) => (
+          {/* Game Phase UI */}
+          <div className="w-full bg-white rounded-xl shadow-md p-6 mb-6">
+            {/* Timer Display */}
+            <div className="w-full mb-6 p-4 flex flex-col items-center justify-center bg-gray-50 rounded-lg shadow-sm">
+              <div className="flex justify-between w-full mb-4">
+                <div className="flex items-center">
+                  <svg className="w-5 h-5 text-pink-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  <p className="text-lg font-medium">
+                    Question {currentQuestionIndex + 1} of {questions.length}
+                  </p>
+                </div>
+                <div className="flex items-center">
+                  <div className="flex items-center">
+                    <svg className="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                    <p className="text-lg font-medium text-green-600">
+                      Score: {score}/{questions.length}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className={`py-4 px-8 rounded-full ${timeRemaining <= 10 ? 'bg-red-100' : 'bg-pink-100'} mb-2`}>
+                <span className={`text-5xl font-bold ${timeRemaining <= 10 ? 'text-red-500' : 'text-pink-600'}`}>
+                  {formatTime(timeRemaining)}
+                </span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
                 <div 
-                  key={idx} 
-                  className={`w-3 h-3 rounded-full ${
-                    currentQuestionIndex === idx ? 'bg-pink-500 animate-pulse' : 
-                    answeredQuestions.includes(idx) ? 'bg-green-500' : 
-                    failedQuestions.includes(idx) ? 'bg-red-500' : 'bg-gray-300'
-                  }`}
+                  className={`${timeRemaining <= 10 ? 'bg-red-500' : 'bg-pink-500'} h-2 rounded-full transition-all`}
+                  style={{ width: `${(timeRemaining / timerPerQuestion) * 100}%` }}
                 ></div>
-              ))}
+              </div>
             </div>
-          </div>
 
-          {/* Action Buttons */}
-          <div className="flex space-x-4 mb-6 justify-center w-full">
-            <button
-              onClick={showCurrentQuestion}
-              className="px-6 py-3 font-semibold text-white bg-pink-500 hover:bg-pink-600 rounded-lg transition-all flex-1 max-w-xs"
-              disabled={!isActive}
-            >
-              View Question
-            </button>
-            
-            <button
-              onClick={nextQuestion}
-              className="px-6 py-3 font-semibold text-white bg-yellow-500 hover:bg-yellow-600 rounded-lg transition-all flex-1 max-w-xs"
-              disabled={!isActive}
-            >
-              Skip Question
-            </button>
-          </div>
+            {/* Question Progress Indicators */}
+            <div className="w-full mb-6 flex justify-center">
+              <div className="flex space-x-2">
+                {questions.map((_, idx) => (
+                  <div 
+                    key={idx} 
+                    className={`w-8 h-2 rounded-full transition-all ${
+                      currentQuestionIndex === idx ? 'bg-pink-500 w-12' : 
+                      answeredQuestions.includes(idx) ? 'bg-green-500' : 
+                      failedQuestions.includes(idx) ? 'bg-red-400' : 'bg-gray-300'
+                    }`}
+                  ></div>
+                ))}
+              </div>
+            </div>
 
-          {/* Control Buttons */}
-          <div className="flex justify-center mb-6">
+            {/* Action Buttons */}
+            <div className="flex space-x-4 mb-6 justify-center w-full">
+              <button
+                onClick={markAsAnswered}
+                className="px-6 py-4 font-semibold text-white bg-gradient-to-r from-green-500 to-green-600 rounded-lg shadow-md hover:from-green-600 hover:to-green-700 transition-all flex items-center justify-center"
+              >
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                Got It!
+              </button>
+              <button
+                onClick={nextQuestion}
+                className="px-6 py-4 font-semibold text-white bg-gradient-to-r from-blue-400 to-blue-500 rounded-lg shadow-md hover:from-blue-500 hover:to-blue-600 transition-all flex items-center justify-center"
+              >
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                </svg>
+                Skip / Next
+              </button>
+            </div>
+
+            {/* Current Question Card */}
+            <div className={`w-full p-6 mb-6 bg-white rounded-lg shadow-md ${cardGlowEffect}`}>
+              <h2 className="text-2xl font-semibold text-gray-700 mb-4 flex items-center justify-center">
+                <svg className="w-6 h-6 mr-2 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Current Question
+              </h2>
+              <div className="text-center p-8 bg-pink-50 rounded-lg mb-4">
+                <p className="text-3xl text-gray-800 font-medium leading-relaxed">
+                  {questions[currentQuestionIndex]}
+                </p>
+              </div>
+              {timeExpired && (
+                <div className="w-full flex justify-center">
+                  <div className="px-4 py-2 bg-red-100 text-red-700 rounded-lg flex items-center">
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Time's up! Moving to the next question...
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Reset Button */}
             <button
               onClick={resetSession}
-              className="px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition-all"
+              className="px-4 py-2 text-pink-600 border border-pink-300 rounded-lg hover:bg-pink-50 transition-all flex items-center justify-center mb-4"
             >
-              End Session
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+              </svg>
+              Reset & Configure New Game
             </button>
           </div>
         </>
       )}
 
-      {/* Timer Configuration Modal */}
-      {showTimerModal && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-xl shadow-lg max-w-md w-full transform transition-all">
-            <h2 className="text-xl font-bold text-pink-600 mb-4">Configure Timer</h2>
+      {/* Game Completed UI */}
+      {gameCompleted && (
+        <div className="w-full bg-white rounded-xl shadow-md p-6 mb-6">
+          <div className="flex flex-col items-center">
+            {/* Confetti animation - just adding a few static elements for visualization */}
+            <div className="relative w-full h-32">
+              <div className="confetti" style={{ left: '10%', animationDelay: '0.2s', backgroundColor: '#F472B6' }}></div>
+              <div className="confetti" style={{ left: '20%', animationDelay: '0.5s', backgroundColor: '#38BDF8' }}></div>
+              <div className="confetti" style={{ left: '30%', animationDelay: '0.1s', backgroundColor: '#A78BFA' }}></div>
+              <div className="confetti" style={{ left: '40%', animationDelay: '0.7s', backgroundColor: '#FB923C' }}></div>
+              <div className="confetti" style={{ left: '50%', animationDelay: '0.3s', backgroundColor: '#4ADE80' }}></div>
+              <div className="confetti" style={{ left: '60%', animationDelay: '0.6s', backgroundColor: '#F472B6' }}></div>
+              <div className="confetti" style={{ left: '70%', animationDelay: '0.2s', backgroundColor: '#38BDF8' }}></div>
+              <div className="confetti" style={{ left: '80%', animationDelay: '0.4s', backgroundColor: '#A78BFA' }}></div>
+              <div className="confetti" style={{ left: '90%', animationDelay: '0.5s', backgroundColor: '#FB923C' }}></div>
+            </div>
+
+            <h2 className="text-3xl font-bold text-center text-pink-600 mb-4">Session Complete!</h2>
+            <div className="h-1 w-24 bg-gradient-to-r from-pink-300 to-pink-500 rounded-full mb-6"></div>
             
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Time per question (seconds)</label>
-              <input
-                type="number"
-                value={timerInput}
-                onChange={(e) => setTimerInput(e.target.value)}
-                className="w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500"
-              />
+            <div className="w-32 h-32 flex items-center justify-center bg-pink-100 text-pink-600 rounded-full mb-6">
+              <div className="text-center">
+                <div className="text-4xl font-bold">{score}</div>
+                <div className="text-sm">of {questions.length}</div>
+              </div>
             </div>
             
-            <div className="mb-6">
-              <p className="text-sm text-gray-600 mb-2">Quick options:</p>
-              <div className="flex flex-wrap gap-2">
-                {timerOptions.map((option) => (
-                  <button
-                    key={option}
-                    onClick={() => setTimerInput(option.toString())}
-                    className={`px-3 py-1 text-sm rounded-md transition-all ${
-                      parseInt(timerInput) === option
-                        ? 'bg-pink-500 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-pink-100'
+            <p className="text-xl text-center text-gray-700 mb-6 max-w-lg">
+              {getFeedbackMessage()}
+            </p>
+            
+            <div className="w-full bg-gray-50 rounded-lg p-5 mb-6">
+              <h3 className="text-lg font-semibold text-gray-700 mb-4">Question Breakdown</h3>
+              <div className="space-y-3 max-h-64 overflow-y-auto">
+                {questions.map((q, index) => (
+                  <div 
+                    key={index} 
+                    className={`p-3 rounded-lg flex items-start ${
+                      answeredQuestions.includes(index) 
+                        ? 'bg-green-50 border border-green-100' 
+                        : 'bg-red-50 border border-red-100'
                     }`}
                   >
-                    {option}s
-                  </button>
+                    <div 
+                      className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center mr-3 ${
+                        answeredQuestions.includes(index) 
+                          ? 'bg-green-500 text-white' 
+                          : 'bg-red-400 text-white'
+                      }`}
+                    >
+                      {answeredQuestions.includes(index) ? (
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                      ) : (
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                      )}
+                    </div>
+                    <div>
+                      <p className={`font-medium ${
+                        answeredQuestions.includes(index) 
+                          ? 'text-green-700' 
+                          : 'text-red-700'
+                      }`}>
+                        Question {index + 1}
+                      </p>
+                      <p className="text-gray-700">{q}</p>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
             
-            <p className="text-gray-600 mb-6">
-              Your partner will have this much time to answer each question. Make it challenging but fun!
-            </p>
-            
-            <div className="flex space-x-3">
+            <div className="flex space-x-4">
               <button
-                onClick={saveTimerConfig}
-                className="flex-1 px-4 py-2 font-medium text-white bg-pink-500 rounded-lg hover:bg-pink-600 transition-all"
+                onClick={resetSession}
+                className="px-6 py-3 font-semibold text-pink-600 bg-white border-2 border-pink-500 rounded-lg hover:bg-pink-50 transition-all shadow-md"
               >
-                Save
+                <svg className="w-5 h-5 mr-2 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                Play Again
               </button>
               <button
+                onClick={onBackToDashboard}
+                className="px-6 py-3 font-semibold text-white bg-gradient-to-r from-pink-500 to-pink-600 rounded-lg shadow-md hover:from-pink-600 hover:to-pink-700 transition-all"
+              >
+                Back to Dashboard
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Timer Configuration Modal */}
+      {showTimerModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 max-w-md w-full">
+            <h2 className="text-2xl font-semibold text-gray-700 mb-4">Timer Settings</h2>
+            <div className="mb-4">
+              <label className="block text-gray-700 mb-2">Time per question (seconds)</label>
+              <input
+                type="number"
+                value={timerInput}
+                onChange={(e) => setTimerInput(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                min="5"
+              />
+            </div>
+            <div className="mb-4">
+              <p className="text-sm text-gray-500 mb-2">Quick select:</p>
+              <div className="flex flex-wrap gap-2">
+                {timerOptions.map((time) => (
+                  <button
+                    key={time}
+                    onClick={() => setTimerInput(time.toString())}
+                    className={`px-3 py-1 text-sm rounded-full transition-all ${
+                      parseInt(timerInput) === time
+                        ? 'bg-pink-500 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    {time}s
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="flex justify-end space-x-3">
+              <button
                 onClick={closeTimerModal}
-                className="flex-1 px-4 py-2 font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
+                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
               >
                 Cancel
               </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Question Modal */}
-      {showQuestionModal && isPlaying && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-          <div className={`bg-white p-8 rounded-xl shadow-lg max-w-lg w-full transform transition-all ${cardGlowEffect}`}>
-            {/* Timer in Modal */}
-            <div className="p-4 rounded-lg mb-6 flex flex-col items-center bg-gray-100">
-              <p className="text-lg font-medium text-gray-700 mb-1">Time Remaining</p>
-              <div className={`text-4xl font-bold ${
-                timeRemaining <= 10 ? 'text-red-500' : 'text-pink-500'
-              }`}>
-                {timeExpired ? "00:00" : formatTime(timeRemaining)}
-              </div>
-              {timeExpired && (
-                <p className="text-red-500 font-medium mt-2">Time's up!</p>
-              )}
-              {cardGlowEffect === 'green-glow' && (
-                <p className="text-green-500 font-medium mt-2">Great answer!</p>
-              )}
-            </div>
-            
-            <h2 className="text-2xl font-bold text-pink-600 mb-3">Question {currentQuestionIndex + 1} of {questions.length}</h2>
-            <p className="text-2xl mb-6 p-4 rounded-lg border-l-4 bg-gray-50 border-pink-500">
-              {questions[currentQuestionIndex]}
-            </p>
-            
-            {/* Modal buttons arranged horizontally */}
-            <div className="flex space-x-3 mb-4">
               <button
-                onClick={() => {
-                  markAsAnswered();
-                }}
-                className={`px-6 py-3 font-semibold text-white rounded-lg transition-all flex-1 ${
-                  cardGlowEffect === 'green-glow' || answeredQuestions.includes(currentQuestionIndex)
-                  ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-green-500 hover:bg-green-600'
-                }`}
-                disabled={cardGlowEffect === 'green-glow' || answeredQuestions.includes(currentQuestionIndex)}
+                onClick={saveTimerConfig}
+                className="px-4 py-2 text-white bg-gradient-to-r from-pink-500 to-pink-600 rounded-lg hover:from-pink-600 hover:to-pink-700 transition-all"
               >
-                Answered
-              </button>
-              
-              <button
-                onClick={() => {
-                  handleCloseModal();
-                  nextQuestion();
-                }}
-                className="px-6 py-3 font-semibold text-white bg-yellow-500 hover:bg-yellow-600 rounded-lg transition-all flex-1"
-              >
-                Skip
-              </button>
-              
-              <button
-                onClick={handleCloseModal}
-                className="px-6 py-3 font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all flex-1"
-              >
-                Close
+                Save
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Game Completed Modal */}
-      {gameCompleted && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-          <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full transform transition-all">
-            <h2 className="text-2xl font-bold text-pink-600 mb-4">Couple's Fast Talk Completed!</h2>
-            
-            {/* Score with visual percentage */}
-            <div className="mb-6">
-              <div className="flex justify-between items-center mb-2">
-                <p className="text-xl">Connection Score: {score}/{questions.length}</p>
-                <p className="text-lg font-medium">
-                  {questions.length > 0 ? Math.round((score / questions.length) * 100) : 0}%
-                </p>
-              </div>
-              
-              {/* Progress bar */}
-              <div className="w-full bg-gray-200 rounded-full h-4">
-                <div 
-                  className="bg-pink-500 h-4 rounded-full" 
-                  style={{ width: `${questions.length > 0 ? (score / questions.length) * 100 : 0}%` }}
-                ></div>
-              </div>
-            </div>
-            
-            {/* Questions summary */}
-            <div className="mb-6">
-              <p className="text-gray-700 font-medium mb-2">Questions Summary:</p>
-              <div className="flex justify-between text-sm">
-                <p className="text-green-600">Answered: {answeredQuestions.length}</p>
-                <p className="text-red-600">Missed: {failedQuestions.length}</p>
-              </div>
-            </div>
-            
-            {/* Feedback message based on percentage */}
-            <p className="text-gray-700 mb-6 p-4 bg-pink-50 rounded-lg border-l-4 border-pink-400">
-              {getFeedbackMessage()}
-            </p>
-            
-            <button
-              onClick={resetSession}
-              className="px-6 py-3 font-semibold text-white bg-pink-500 rounded-lg shadow-md hover:bg-pink-600 transition-all w-full"
-            >
-              Back to Setup
-            </button>
-          </div>
-        </div>
-      )}
+     
     </div>
   );
 };
