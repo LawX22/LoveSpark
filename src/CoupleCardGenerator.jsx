@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { fetchQuestions } from './api/questionsService';
 
-const CoupleCardGenerator = () => {
+const CoupleCardGenerator = ({ onBackToDashboard }) => {
   const [cards, setCards] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('romantic');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -12,6 +13,44 @@ const CoupleCardGenerator = () => {
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
+  const [questions, setQuestions] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Categories definition
+  const categories = [
+    { id: 'romantic', name: 'Romantic', emoji: '❤️' },
+    { id: 'fun', name: 'Fun & Playful', emoji: '😄' },
+    { id: 'deep', name: 'Deep Connection', emoji: '✨' },
+    { id: 'future', name: 'Future Plans', emoji: '🔮' },
+    { id: 'memories', name: 'Memories', emoji: '📸' },
+  ];
+
+  // Fetch questions when component mounts
+  useEffect(() => {
+    const loadAllQuestions = async () => {
+      setIsLoading(true);
+      setError(null);
+      
+      try {
+        const questionsData = {};
+        
+        for (const category of categories) {
+          const data = await fetchQuestions(category.id);
+          questionsData[category.id] = data.questions;
+        }
+        
+        setQuestions(questionsData);
+        setIsLoading(false);
+      } catch (err) {
+        console.error("Failed to load questions:", err);
+        setError("Failed to load questions. Please try again later.");
+        setIsLoading(false);
+      }
+    };
+    
+    loadAllQuestions();
+  }, []);
 
   // Close modal when clicking outside
   useEffect(() => {
@@ -48,85 +87,12 @@ const CoupleCardGenerator = () => {
     };
   }, [isModalOpen]);
 
-  // Question categories
-  const categories = [
-    { id: 'romantic', name: 'Romantic', emoji: '❤️' },
-    { id: 'fun', name: 'Fun & Playful', emoji: '😄' },
-    { id: 'deep', name: 'Deep Connection', emoji: '✨' },
-    { id: 'future', name: 'Future Plans', emoji: '🔮' },
-    { id: 'memories', name: 'Memories', emoji: '📸' },
-  ];
-
-  // Question banks by category
-  const questionBanks = {
-    romantic: [
-      "What's your favorite memory of us together?",
-      "When did you first realize you were falling in love with me?",
-      "What's one small thing I do that makes you feel loved?",
-      "What do you think is the most romantic thing we've ever done?",
-      "How do you feel when we're apart for a long time?",
-      "What's your favorite way to spend time with me?",
-      "What's one thing you'd like us to do more often?",
-      "What's the most romantic gift you've ever received from me?",
-      "What's your favorite thing about our relationship?",
-      "What's one thing you'd like to improve in our relationship?",
-    ],
-    fun: [
-      "If we could go on any adventure together, where would you want to go?",
-      "What's the funniest thing that's ever happened to us?",
-      "If we could switch lives for a day, what would you do?",
-      "What's your favorite inside joke between us?",
-      "What's the most fun date we've ever been on?",
-      "If we could have any superpower together, what would it be?",
-      "What's your favorite game or activity to do together?",
-      "What's the silliest thing we've ever done together?",
-      "If we could have a movie night, what would we watch?",
-      "What's your favorite way to make me laugh?",
-    ],
-    deep: [
-      "What's one thing you've always wanted to tell me but haven't?",
-      "What do you think is the strongest part of our relationship?",
-      "What's one thing you admire most about me?",
-      "What's one thing you think we need to work on together?",
-      "What's your biggest fear about our relationship?",
-      "What's one thing you'd like to achieve together in the next year?",
-      "What's the most meaningful moment we've shared?",
-      "What's one thing you'd like to learn about me?",
-      "What's one thing you'd like me to understand about you?",
-      "What's your favorite way we support each other?",
-    ],
-    future: [
-      "Where do you see us in 5 years?",
-      "What's one dream you'd like us to achieve together?",
-      "What's your ideal way to spend our future vacations?",
-      "What's one thing you'd like us to build or create together?",
-      "What's your vision for our future family?",
-      "What's one place you'd like us to visit together?",
-      "What's one goal you'd like us to work towards?",
-      "What's your favorite thing about planning a future with me?",
-      "What's one thing you'd like us to learn together?",
-      "What's your favorite way to imagine our future?",
-    ],
-    memories: [
-      "What's your favorite memory of us from the past year?",
-      "What's the first thing you remember about us?",
-      "What's your favorite photo of us and why?",
-      "What's one memory that always makes you smile?",
-      "What's the most unforgettable moment we've shared?",
-      "What's one memory you'd like to relive?",
-      "What's your favorite trip we've taken together?",
-      "What's one memory that makes you feel proud of us?",
-      "What's your favorite way we've celebrated something together?",
-      "What's one memory you'd like to create in the future?",
-    ],
-  };
-
   // Generate random question cards
   const generateCards = () => {
     setIsGenerating(true);
     setTimeout(() => {
       const newCards = [];
-      const categoryQuestions = questionBanks[selectedCategory];
+      const categoryQuestions = questions[selectedCategory] || [];
       const questionCount = Math.min(customOptions.questionCount, categoryQuestions.length);
 
       // Shuffle the questions array to get random questions
@@ -181,8 +147,62 @@ const CoupleCardGenerator = () => {
     setIsModalOpen(false);
   };
 
+  // If loading, show loading state
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center w-full max-w-4xl p-4 mx-auto bg-gray-50 rounded-lg">
+        <button 
+          onClick={onBackToDashboard}
+          className="self-start mb-6 bg-white text-pink-600 font-medium py-2 px-4 rounded-lg shadow hover:shadow-md transition-all flex items-center"
+        >
+          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+          Back to Dashboard
+        </button>
+        <h1 className="mb-6 text-3xl font-bold text-center text-gray-800">Couple Love Cards</h1>
+        <div className="flex flex-col items-center justify-center h-64">
+          <div className="w-12 h-12 border-4 border-pink-500 border-t-transparent rounded-full animate-spin"></div>
+          <p className="mt-4 text-gray-600">Loading questions...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If error, show error state
+  if (error && !Object.keys(questions).length) {
+    return (
+      <div className="flex flex-col items-center w-full max-w-4xl p-4 mx-auto bg-gray-50 rounded-lg">
+        <button 
+          onClick={onBackToDashboard}
+          className="self-start mb-6 bg-white text-pink-600 font-medium py-2 px-4 rounded-lg shadow hover:shadow-md transition-all flex items-center"
+        >
+          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+          Back to Dashboard
+        </button>
+        <h1 className="mb-6 text-3xl font-bold text-center text-gray-800">Couple Love Cards</h1>
+        <div className="p-4 mb-4 text-red-700 bg-red-100 rounded-lg">
+          <p>Error loading questions: {error}</p>
+          <p className="mt-2">Please try refreshing the page.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col items-center w-full max-w-4xl p-4 mx-auto bg-gray-50 rounded-lg">
+      <button 
+        onClick={onBackToDashboard}
+        className="self-start mb-6 bg-white text-pink-600 font-medium py-2 px-4 rounded-lg shadow hover:shadow-md transition-all flex items-center"
+      >
+        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        Back to Dashboard
+      </button>
+
       <h1 className="mb-6 text-3xl font-bold text-center text-gray-800">Couple Love Cards</h1>
 
       {/* Category Selection */}
@@ -286,7 +306,7 @@ const CoupleCardGenerator = () => {
       </button>
 
       {/* Modal for Card Display */}
-      {isModalOpen && (
+      {isModalOpen && cards.length > 0 && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="modal-content relative w-full max-w-lg mx-4 bg-white rounded-lg shadow-lg">
             {/* Close Button */}
